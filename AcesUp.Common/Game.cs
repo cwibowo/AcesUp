@@ -53,14 +53,24 @@ public class Game
 
     private bool AreThereMovesToEmptyPiles()
     {
-        // Add code here
+        // Can only move if there's any empty piles.
+        bool hasEmptyPiles = _piles.Any(pile => pile.IsEmpty);
+        if (!hasEmptyPiles) return false;
 
-        return false;
+        // Can only move if any piles have at least 2 cards.
+        bool hasMovablePiles = _piles.Any(pile => pile.Count >= 2);
+
+        return hasMovablePiles;
     }
 
     private void MoveCardToEmptyPile()
     {
-        // Add code here
+        var emptyPiles = _piles.Where(pile => pile.IsEmpty);
+        var movablePiles = _piles.Where(pile => pile.Count >= 2);
+
+        // Simple removal strategy
+        var card = movablePiles.First().Pop();
+        emptyPiles.First().Push(card);
     }
 
     public bool IsGameWon()
