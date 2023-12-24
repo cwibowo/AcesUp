@@ -27,22 +27,19 @@ public class Game
         {
             searching = false;
 
-            IDictionary<Suit, IList<Pile>> pileGroup = new Dictionary<Suit, IList<Pile>>();
-            foreach (var pile in _piles.Where(pile => !pile.IsEmpty))
-            {
-                var suit = pile.Peek().Suit;
-                if (!pileGroup.ContainsKey(suit)) pileGroup.Add(suit, new List<Pile>());
-
-                pileGroup[suit].Add(pile);
-            }
+            // Make a grouping based on the suit of the top card of each pile.
+            var pileGroup = _piles.Where(pile => !pile.IsEmpty).GroupBy(pile => pile.Peek().Suit);
 
             foreach (var groupedPile in pileGroup)
             {
-                if (groupedPile.Value.Count >= 2)
+                if (groupedPile.Count() >= 2)
                 {
-                    var pileWithLowestRank = groupedPile.Value.OrderBy(pile => pile.Peek().Rank).First();
-                    pileWithLowestRank.Pop();
+                    // Remove the lowest rank card when there are at least 2 matches for each group.
+                    // Break to regroup as there might be a new group after removal.
+                    var pileWithLowestRankCard = groupedPile.MinBy(pile => pile.Peek().Rank);
+                    pileWithLowestRankCard?.Pop();
                     searching = true;
+                    break;
                 }
             }
         }
@@ -91,7 +88,7 @@ public class Game
         MoveCardToEmptyPile();
     }
 
-    private static void MoveCard(IEnumerable<Pile> emptyPiles, Pile? pile)
+    private static void MoveCard(IEnumerable<Pile> emptyPiles, Pile pile)
     {
         var card = pile.Pop();
         emptyPiles.First().Push(card);
