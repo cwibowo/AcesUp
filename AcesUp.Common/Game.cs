@@ -25,7 +25,30 @@ public class Game
 
     private void RemoveLowerRankedCards()
     {
-        // Add code here
+        bool searching = true;
+        while (searching)
+        {
+            searching = false;
+
+            IDictionary<Suit, IList<Pile>> pileGroup = new Dictionary<Suit, IList<Pile>>();
+            foreach (var pile in _piles.Where(x => !x.IsEmpty))
+            {
+                var suit = pile.Peek().Suit;
+                if (!pileGroup.ContainsKey(suit)) pileGroup.Add(suit, new List<Pile>());
+
+                pileGroup[suit].Add(pile);
+            }
+
+            foreach (var groupedPile in pileGroup)
+            {
+                if (groupedPile.Value.Count >= 2)
+                {
+                    var pileWithLowestRank = groupedPile.Value.OrderBy(x => x.Peek().Rank).First();
+                    pileWithLowestRank.Pop();
+                    searching = true;
+                }
+            }
+        }
     }
 
     private bool AreThereMovesToEmptyPiles()
