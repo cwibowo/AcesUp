@@ -17,7 +17,10 @@ public class Game
 
     private void DealNewCards(Deck deck)
     {
-        // Add code here
+        foreach (var pile in _piles)
+        {
+            pile.Push(deck.Take());
+        }
     }
 
     private void RemoveLowerRankedCards()
