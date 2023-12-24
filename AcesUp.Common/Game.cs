@@ -7,12 +7,7 @@ public class Game
     public void RunAllSteps(Deck deck)
     {
         DealNewCards(deck);
-        RemoveLowerRankedCards();
-        while (AreThereMovesToEmptyPiles())
-        {
-            MoveCardToEmptyPile();
-            RemoveLowerRankedCards();
-        }
+        MoveCardToEmptyPile();
     }
 
     private void DealNewCards(Deck deck)
@@ -51,26 +46,21 @@ public class Game
         }
     }
 
-    private bool AreThereMovesToEmptyPiles()
-    {
-        // Can only move if there's any empty piles.
-        bool hasEmptyPiles = _piles.Any(pile => pile.IsEmpty);
-        if (!hasEmptyPiles) return false;
-
-        // Can only move if any piles have at least 2 cards.
-        bool hasMovablePiles = _piles.Any(pile => pile.Count >= 2);
-
-        return hasMovablePiles;
-    }
-
     private void MoveCardToEmptyPile()
     {
+        RemoveLowerRankedCards();
+
         var emptyPiles = _piles.Where(pile => pile.IsEmpty);
+        if (!emptyPiles.Any()) return;
+
         var movablePiles = _piles.Where(pile => pile.Count >= 2);
+        if (!movablePiles.Any()) return;
 
         // Simple removal strategy
         var card = movablePiles.First().Pop();
         emptyPiles.First().Push(card);
+
+        MoveCardToEmptyPile();
     }
 
     public bool IsGameWon()
