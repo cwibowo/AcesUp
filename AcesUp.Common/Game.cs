@@ -1,4 +1,6 @@
-﻿namespace AcesUp.Common;
+﻿using System.Net.NetworkInformation;
+
+namespace AcesUp.Common;
 
 public class Game
 {
@@ -56,11 +58,43 @@ public class Game
         var movablePiles = _piles.Where(pile => pile.Count >= 2);
         if (!movablePiles.Any()) return;
 
-        // Simple removal strategy
-        var card = movablePiles.First().Pop();
-        emptyPiles.First().Push(card);
+        // Better strategy from wikihow.
+        bool isCardMoved = false;
+        foreach (var pile in movablePiles)
+        {
+            var topCard = pile.Peek();
+            var secondCard = pile.Skip(1).First();
+
+            if (topCard.Suit == secondCard.Suit && topCard.Rank < secondCard.Rank)
+            {
+                MoveCard(emptyPiles, pile);
+                isCardMoved = true;
+                break;
+            }
+
+            // if there's an ace, move it
+            if (topCard.Rank == Rank.Ace)
+            {
+                MoveCard(emptyPiles, pile);
+                isCardMoved = true;
+                break;
+            }
+        }
+
+        if (!isCardMoved)
+        {
+            var cardToMove = movablePiles.First().Pop();
+            emptyPiles.First().Push(cardToMove);
+        }
+
 
         MoveCardToEmptyPile();
+    }
+
+    private static void MoveCard(IEnumerable<Pile> emptyPiles, Pile? pile)
+    {
+        var card = pile.Pop();
+        emptyPiles.First().Push(card);
     }
 
     public bool IsGameWon()
