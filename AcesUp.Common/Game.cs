@@ -68,20 +68,12 @@ public class Game
                 isCardMoved = true;
                 break;
             }
-
-            // if there's an ace, move it
-            if (topCard.Rank == Rank.Ace)
-            {
-                MoveCard(emptyPiles, pile);
-                isCardMoved = true;
-                break;
-            }
         }
 
         if (!isCardMoved)
         {
-            var cardToMove = movablePiles.First().Pop();
-            emptyPiles.First().Push(cardToMove);
+            var pileToPop = movablePiles.OrderByDescending(pile => pile.Peek().Rank).First();
+            MoveCard(emptyPiles, pileToPop);
         }
 
 
