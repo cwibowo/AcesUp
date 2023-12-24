@@ -6,6 +6,9 @@ namespace AcesUp.ConsoleApp
     {
         static void Main()
         {
+            // Setting output encoding so the suit of the cards can be displayed in the console.
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             var r = new Random();
 
             var deck = Deck.CreateShuffledDeck(r);
