@@ -31,7 +31,7 @@ public class Game
             searching = false;
 
             IDictionary<Suit, IList<Pile>> pileGroup = new Dictionary<Suit, IList<Pile>>();
-            foreach (var pile in _piles.Where(x => !x.IsEmpty))
+            foreach (var pile in _piles.Where(pile => !pile.IsEmpty))
             {
                 var suit = pile.Peek().Suit;
                 if (!pileGroup.ContainsKey(suit)) pileGroup.Add(suit, new List<Pile>());
@@ -43,7 +43,7 @@ public class Game
             {
                 if (groupedPile.Value.Count >= 2)
                 {
-                    var pileWithLowestRank = groupedPile.Value.OrderBy(x => x.Peek().Rank).First();
+                    var pileWithLowestRank = groupedPile.Value.OrderBy(pile => pile.Peek().Rank).First();
                     pileWithLowestRank.Pop();
                     searching = true;
                 }
